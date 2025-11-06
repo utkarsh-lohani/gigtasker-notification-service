@@ -16,6 +16,13 @@ public class RabbitMQConfig {
     public static final String EXCHANGE_NAME = "task-exchange";
     public static final String ROUTING_KEY = "task.created";
     public static final String QUEUE_NAME = "notification.queue";
+    public static final String BID_EXCHANGE_NAME = "bid-exchange";
+    public static final String BID_ROUTING_KEY = "bid.placed";
+    public static final String BID_QUEUE_NAME = "bid.notification.queue";
+    public static final String BID_ACCEPTED_KEY = "bid.accepted";
+    public static final String BID_REJECTED_KEY = "bid.rejected";
+    public static final String BID_ACCEPTED_QUEUE = "bid.accepted.notification.queue";
+    public static final String BID_REJECTED_QUEUE = "bid.rejected.notification.queue";
 
     @Bean
     public MessageConverter jsonMessageConverter() {
@@ -40,5 +47,46 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(queue)
                 .to(exchange)
                 .with(ROUTING_KEY);
+    }
+
+    @Bean
+    public Queue bidQueue() {
+        return new Queue(BID_QUEUE_NAME, true);
+    }
+
+    @Bean
+    public TopicExchange bidExchange() {
+        return new TopicExchange(BID_EXCHANGE_NAME);
+    }
+
+    @Bean
+    public Binding bidBinding(Queue bidQueue, TopicExchange bidExchange) {
+        return BindingBuilder.bind(bidQueue)
+                .to(bidExchange)
+                .with(BID_ROUTING_KEY);
+    }
+
+    @Bean
+    public Queue bidAcceptedQueue() {
+        return new Queue(BID_ACCEPTED_QUEUE, true);
+    }
+
+    @Bean
+    public Queue bidRejectedQueue() {
+        return new Queue(BID_REJECTED_QUEUE, true);
+    }
+
+    @Bean
+    public Binding bidAcceptedBinding() {
+        return BindingBuilder.bind(bidAcceptedQueue())
+                .to(bidExchange())
+                .with(BID_ACCEPTED_KEY);
+    }
+
+    @Bean
+    public Binding bidRejectedBinding() {
+        return BindingBuilder.bind(bidRejectedQueue())
+                .to(bidExchange())
+                .with(BID_REJECTED_KEY);
     }
 }
