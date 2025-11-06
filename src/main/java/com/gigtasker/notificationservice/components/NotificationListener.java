@@ -1,7 +1,7 @@
-package com.example.notificationservice.components;
+package com.gigtasker.notificationservice.components;
 
-import com.example.notificationservice.config.RabbitMQConfig;
-import com.example.notificationservice.dto.TaskDTO;
+import com.gigtasker.notificationservice.config.RabbitMQConfig;
+import com.gigtasker.notificationservice.dto.TaskDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;

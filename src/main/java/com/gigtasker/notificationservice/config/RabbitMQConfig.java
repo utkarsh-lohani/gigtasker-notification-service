@@ -1,4 +1,4 @@
-package com.example.notificationservice.config;
+package com.gigtasker.notificationservice.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

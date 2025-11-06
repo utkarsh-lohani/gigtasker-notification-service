@@ -1,4 +1,4 @@
-package com.example.notificationservice.dto;
+package com.gigtasker.notificationservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
