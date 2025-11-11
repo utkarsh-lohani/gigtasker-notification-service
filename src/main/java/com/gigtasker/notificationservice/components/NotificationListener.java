@@ -2,6 +2,7 @@ package com.gigtasker.notificationservice.components;
 
 import com.gigtasker.notificationservice.config.RabbitMQConfig;
 import com.gigtasker.notificationservice.dto.BidDTO;
+import com.gigtasker.notificationservice.dto.BidNotificationDTO;
 import com.gigtasker.notificationservice.dto.TaskDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,20 +48,16 @@ public class NotificationListener {
      * It sends a PRIVATE message directly to the bidder.
      */
     @RabbitListener(queues = RabbitMQConfig.BID_ACCEPTED_QUEUE)
-    public void handleBidAccepted(BidDTO bid) {
-        log.info("Sending 'bid.accepted' notification to User ID: {}", bid.getBidderUserId());
+    public void handleBidAccepted(BidNotificationDTO notification) {
+        log.info("Sending 'bid.accepted' notification to user: {}", notification.getBidderEmail());
 
-        //    This is a PRIVATE message.
-        //    We need to get the user's "principal name" (their Keycloak ID/email).
-        //    For now, let's assume their ID is 'user-id-string'.
-        //    TODO: We need a way to map 'bid.getBidderUserId()' (our Postgres ID)
-        //    to their Keycloak principal name. This is a future step.
-        //    For now, we'll just log it.
+        // This is the "rich" message we'll send to Angular
+        String message = "You won the bid for '" + notification.getTaskTitle() + "'!";
 
-        // String userPrincipalName = ... get from user-service ...
-        // messagingTemplate.convertAndSendToUser(userPrincipalName, "/queue/notify", bid);
-
-        log.warn("TODO: Need to implement User ID -> Principal mapping to send private message.");
+        // This is the magic. Spring finds the WebSocket session
+        // authenticated as 'notification.getBidderEmail()'
+        // and sends this message *only* to them.
+        messagingTemplate.convertAndSendToUser(notification.getBidderEmail(), "/queue/notify", message);
     }
 
     /**
@@ -68,9 +65,11 @@ public class NotificationListener {
      * It sends a PRIVATE message directly to the bidder.
      */
     @RabbitListener(queues = RabbitMQConfig.BID_REJECTED_QUEUE)
-    public void handleBidRejected(BidDTO bid) {
-        log.info("Sending 'bid.rejected' notification to User ID: {}", bid.getBidderUserId());
+    public void handleBidRejected(BidNotificationDTO notification) {
+        log.info("Sending 'bid.rejected' notification to user: {}", notification.getBidderEmail());
 
-        log.warn("TODO: Need to implement User ID -> Principal mapping to send private message.");
+        String message = "Your bid for '" + notification.getTaskTitle() + "' was rejected.";
+
+        messagingTemplate.convertAndSendToUser(notification.getBidderEmail(), "/queue/notify", message);
     }
 }
