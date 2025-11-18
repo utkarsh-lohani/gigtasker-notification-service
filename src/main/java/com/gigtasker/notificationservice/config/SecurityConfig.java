@@ -1,8 +1,12 @@
 package com.gigtasker.notificationservice.config;
 
+import org.gigtasker.gigtaskercommon.security.GigTaskerSecurity;
+import org.gigtasker.gigtaskercommon.security.KeycloakRoleConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -11,6 +15,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
+@Import(GigTaskerSecurity.class)
 public class SecurityConfig {
 
     /**
@@ -32,7 +38,8 @@ public class SecurityConfig {
                         // 3. Secure everything else
                         .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {}));
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(notificationJwtAuthenticationConverter())));
 
         return http.build();
     }
@@ -43,9 +50,10 @@ public class SecurityConfig {
      * not the "sub" (subject) ID.
      */
     @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    public JwtAuthenticationConverter notificationJwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
+        converter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
         // This makes "sendToUser("user@example.com", ...)" work
         converter.setPrincipalClaimName("email");
 
