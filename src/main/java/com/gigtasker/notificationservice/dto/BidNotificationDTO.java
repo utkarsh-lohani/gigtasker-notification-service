@@ -7,4 +7,5 @@ public class BidNotificationDTO {
     private Double amount;
     private String bidderEmail;
     private String taskTitle;
+    private Long taskId;
 }

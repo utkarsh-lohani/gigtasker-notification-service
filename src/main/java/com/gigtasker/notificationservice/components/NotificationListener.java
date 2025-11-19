@@ -58,6 +58,11 @@ public class NotificationListener {
         // authenticated as 'notification.getBidderEmail()'
         // and sends this message *only* to them.
         messagingTemplate.convertAndSendToUser(notification.getBidderEmail(), "/queue/notify", message);
+
+        // Notify anyone looking at this task that it has changed.
+        // We send a simple string "REFRESH" to the task's topic.
+        String publicTopic = "/topic/task/" + notification.getTaskId(); // You need taskId in DTO!
+        messagingTemplate.convertAndSend(publicTopic, "STATUS_CHANGED");
     }
 
     /**
@@ -71,5 +76,10 @@ public class NotificationListener {
         String message = "Your bid for '" + notification.getTaskTitle() + "' was rejected.";
 
         messagingTemplate.convertAndSendToUser(notification.getBidderEmail(), "/queue/notify", message);
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.TASK_COMPLETED_QUEUE)
+    public void handleTaskCompleted(TaskDTO task) {
+        log.info("Task {} marked as COMPLETED. Notifying owner: {}", task.getId(), task.getPosterUserId());
     }
 }

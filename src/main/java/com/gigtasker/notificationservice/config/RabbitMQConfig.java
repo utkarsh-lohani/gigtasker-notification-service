@@ -23,6 +23,8 @@ public class RabbitMQConfig {
     public static final String BID_REJECTED_KEY = "bid.rejected";
     public static final String BID_ACCEPTED_QUEUE = "bid.accepted.notification.queue";
     public static final String BID_REJECTED_QUEUE = "bid.rejected.notification.queue";
+    public static final String TASK_COMPLETED_KEY = "task.completed";
+    public static final String TASK_COMPLETED_QUEUE = "task.completed.notification.queue";
 
     @Bean
     public MessageConverter jsonMessageConverter() {
@@ -88,5 +90,17 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(bidRejectedQueue())
                 .to(bidExchange())
                 .with(BID_REJECTED_KEY);
+    }
+
+    @Bean
+    public Queue taskCompletedQueue() {
+        return new Queue(TASK_COMPLETED_QUEUE, true);
+    }
+
+    @Bean
+    public Binding taskCompletedBinding(Queue taskCompletedQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(taskCompletedQueue)
+                .to(exchange)
+                .with(TASK_COMPLETED_KEY);
     }
 }
