@@ -28,6 +28,8 @@ public class SecurityConfig {
         http
                 .cors(withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
+                        // Permitting Health Checks
+                        .requestMatchers("/actuator/health/**").permitAll()
 
                         // 1. Allow the WebSocket handshake to get through
                         .requestMatchers("/ws/**").permitAll()
