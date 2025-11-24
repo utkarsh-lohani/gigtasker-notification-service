@@ -15,6 +15,8 @@ public class RabbitMQConfig {
     // These names must *exactly* match the ones in TaskService
     public static final String EXCHANGE_NAME = "task-exchange";
     public static final String ROUTING_KEY = "task.created";
+    public static final String TASK_COMPLETED_KEY = "task.completed";
+    public static final String TASK_COMPLETED_QUEUE = "task.completed.notification.queue";
     public static final String QUEUE_NAME = "notification.queue";
     public static final String BID_EXCHANGE_NAME = "bid-exchange";
     public static final String BID_ROUTING_KEY = "bid.placed";
@@ -23,8 +25,6 @@ public class RabbitMQConfig {
     public static final String BID_REJECTED_KEY = "bid.rejected";
     public static final String BID_ACCEPTED_QUEUE = "bid.accepted.notification.queue";
     public static final String BID_REJECTED_QUEUE = "bid.rejected.notification.queue";
-    public static final String TASK_COMPLETED_KEY = "task.completed";
-    public static final String TASK_COMPLETED_QUEUE = "task.completed.notification.queue";
 
     @Bean
     public MessageConverter jsonMessageConverter() {
