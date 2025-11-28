@@ -1,8 +1,8 @@
 package com.gigtasker.notificationservice.config;
 
-import org.gigtasker.gigtaskercommon.security.GigTaskerSecurity;
-import org.gigtasker.gigtaskercommon.security.KeycloakRoleConverter;
-import org.gigtasker.gigtaskercommon.security.SecurityCustomizer;
+import org.gigtasker.common.security.GigTaskerSecurity;
+import org.gigtasker.common.security.KeycloakRoleConverter;
+import org.gigtasker.common.security.SecurityCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
